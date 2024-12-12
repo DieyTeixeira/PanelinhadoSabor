@@ -51,6 +51,12 @@ fun PaymentScreen(
     val colorTer = Red
 
     var name by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf("") }
+    var adress by remember { mutableStateOf("") }
+    var numberHome by remember { mutableStateOf("") }
+    var complement by remember { mutableStateOf("") }
+    var district by remember { mutableStateOf("") }
+    var city by remember { mutableStateOf("") }
 
     val totalAmount = cartState.items.sumOf { it.price * it.quantity }
 
@@ -76,39 +82,22 @@ fun PaymentScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Text(
-                    text = "Dados do Cliente:",
-                    fontSize = 18.sp,
-                    color = Color.DarkGray,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { newName -> name = newName },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .background(
-                            Color.White,
-                            RoundedCornerShape(100)
-                        ),
-                    placeholder = {
-                        Text(
-                            text = "Nome",
-                            color = Color.LightGray,
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                lineHeight = 60.sp
-                            )
-                        )
-                    },
-                    shape = RoundedCornerShape(100),
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        color = Color.Black,
-                        fontSize = 16.sp,
-                        lineHeight = 60.sp
-                    )
+                // Dados do Cliente
+                PaymentClient(
+                    name = name,
+                    onNameChange = { newName -> name = newName },
+                    phone = phone,
+                    onPhoneChange = { newPhone -> phone = newPhone },
+                    adress = adress,
+                    onAdressChange = { newAdress -> adress = newAdress },
+                    numberHome = numberHome,
+                    onNumberHomeChange = { newNumberHome -> numberHome = newNumberHome },
+                    complement = complement,
+                    onComplementChange = { newComplement -> complement = newComplement },
+                    district = district,
+                    onDistrictChange = { newDistrict -> district = newDistrict },
+                    city = city,
+                    onCityChange = { newCity -> city = newCity }
                 )
 
                 Spacer(modifier = Modifier.height(15.dp))
@@ -119,14 +108,14 @@ fun PaymentScreen(
                     color = Color.DarkGray,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-                Column(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    PaymentOption("Cartão de Crédito", colorPri)
-                    PaymentOption("PIX", colorPri)
-                    PaymentOption("Dinheiro", colorPri)
+                    Box(modifier = Modifier.width(50.dp)) { PaymentOption("Cartão de Crédito", colorPri) }
+                    Box(modifier = Modifier.width(50.dp)) { PaymentOption("PIX", colorPri) }
+                    Box(modifier = Modifier.width(50.dp)) { PaymentOption("Dinheiro", colorPri) }
                 }
             }
 
@@ -217,8 +206,7 @@ fun PaymentScreen(
 fun PaymentOption(optionName: String, color: Color) {
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
+            .height(80.dp)
             .background(color, RoundedCornerShape(16.dp))
             .clickable { /* Ação ao selecionar método */ },
         contentAlignment = Alignment.Center
