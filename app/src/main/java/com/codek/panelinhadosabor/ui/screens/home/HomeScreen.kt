@@ -19,7 +19,8 @@ import com.codek.panelinhadosabor.ui.theme.Yellow
 @Composable
 fun HomeScreen(
     cartState: CartState,
-    onNavigateToCart: (Int) -> Unit = {}
+    onNavigateToCart: (Int) -> Unit = {},
+    onNavigateToTeste: () -> Unit = {}
 ) {
     val colorPri = Yellow
     val colorSec = Orange
@@ -51,6 +52,7 @@ fun HomeScreen(
         // Seção do logo
         HomeLogo(
             colorSec = colorSec,
+            onNavigateToTeste = { onNavigateToTeste() }
         )
 
         // Seção de Categorias

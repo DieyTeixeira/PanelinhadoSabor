@@ -2,6 +2,7 @@ package com.codek.panelinhadosabor.ui.screens.payment
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -29,10 +31,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.codek.panelinhadosabor.R
+import com.codek.panelinhadosabor.ui.complemento.SendMessageToWhatsApp
+import com.codek.panelinhadosabor.ui.complemento.generateCartMessage
 import com.codek.panelinhadosabor.ui.state.CartState
 import com.codek.panelinhadosabor.ui.state.formatPrice
 import com.codek.panelinhadosabor.ui.theme.Orange
@@ -49,6 +58,10 @@ fun PaymentScreen(
     val colorPri = Yellow
     val colorSec = Orange
     val colorTer = Red
+
+    val context = LocalContext.current
+    val totalValueCart = cartState.items.sumOf { it.price * it.quantity }
+    val tipoPagamento = remember { mutableStateOf("") }
 
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -108,14 +121,57 @@ fun PaymentScreen(
                     color = Color.DarkGray,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-                Row(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(modifier = Modifier.width(50.dp)) { PaymentOption("Cartão de Crédito", colorPri) }
-                    Box(modifier = Modifier.width(50.dp)) { PaymentOption("PIX", colorPri) }
-                    Box(modifier = Modifier.width(50.dp)) { PaymentOption("Dinheiro", colorPri) }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(75.dp)
+                                .border(
+                                    5.dp,
+                                    if (tipoPagamento.value == "Pix") colorSec else Color.Transparent,
+                                    RoundedCornerShape(100))
+                                .clickable {
+                                    tipoPagamento.value = "Pix"
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            PaymentOption(icon = painterResource(id = R.drawable.ic_pix))
+                        }
+                        Box(
+                            modifier = Modifier
+                                .size(75.dp)
+                                .border(
+                                    5.dp,
+                                    if (tipoPagamento.value == "Cartão de Crédito/Débito") colorSec else Color.Transparent,
+                                    RoundedCornerShape(100))
+                                .clickable {
+                                    tipoPagamento.value = "Cartão de Crédito/Débito"
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            PaymentOption(icon = painterResource(id = R.drawable.ic_cartao))
+                        }
+                        Box(
+                            modifier = Modifier
+                                .size(75.dp)
+                                .border(
+                                    5.dp,
+                                    if (tipoPagamento.value == "Dinheiro") colorSec else Color.Transparent,
+                                    RoundedCornerShape(100))
+                                .clickable {
+                                    tipoPagamento.value = "Dinheiro"
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            PaymentOption(icon = painterResource(id = R.drawable.ic_dinheiro))
+                        }
+                    }
                 }
             }
 
@@ -187,11 +243,23 @@ fun PaymentScreen(
                             .clickable(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() }
-                            ) { },
+                            ) {
+                                val message = generateCartMessage(
+                                    cartState,
+                                    totalValueCart,
+                                    tipoPagamento.value
+                                )
+                                onConfirmPayment()
+                                SendMessageToWhatsApp(
+                                    context = context,
+                                    phoneNumber = "5551992189353",
+                                    message = message
+                                )
+                            },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Confirmar",
+                            text = "Finalizar Pedido",
                             color = Color.White,
                             fontSize = 16.sp
                         )
@@ -203,19 +271,15 @@ fun PaymentScreen(
 }
 
 @Composable
-fun PaymentOption(optionName: String, color: Color) {
+fun PaymentOption(icon: Painter) {
     Box(
-        modifier = Modifier
-            .height(80.dp)
-            .background(color, RoundedCornerShape(16.dp))
-            .clickable { /* Ação ao selecionar método */ },
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = optionName,
-            color = Color.White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+        Image(
+            painter = icon,
+            contentDescription = null,
+            modifier = Modifier
+                .size(70.dp)
         )
     }
 }

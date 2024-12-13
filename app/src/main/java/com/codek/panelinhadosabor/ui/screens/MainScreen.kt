@@ -1,5 +1,6 @@
 package com.codek.panelinhadosabor.ui.screens
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
@@ -14,17 +15,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.codek.panelinhadosabor.ui.screens.cart.CartScreen
 import com.codek.panelinhadosabor.ui.screens.home.HomeScreen
 import com.codek.panelinhadosabor.ui.screens.payment.PaymentScreen
 import com.codek.panelinhadosabor.ui.state.CartState
+import java.io.File
 
 @Composable
 fun AppScreen() {
@@ -54,6 +58,7 @@ fun BodyContent(
     cartState: CartState,
     navigateTo: (Int) -> Unit
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,26 +86,33 @@ fun BodyContent(
 
 val screensIndex: List<@Composable (CartState, (Int) -> Unit) -> Unit> = listOf(
     { cartState, navigateTo ->
-        HomeScreen(
+        HomeScreen( // Tela principal - index 0
             cartState = cartState,
-            onNavigateToCart = { navigateTo(1) } // Navegar para o carrinho
+            onNavigateToCart = { navigateTo(1) },
+            onNavigateToTeste = { navigateTo(3) }
         )
     },
     { cartState, navigateTo ->
-        CartScreen(
+        CartScreen( // Tela do carrinho - index 1
             cartState = cartState,
-            onNavigateToHome = { navigateTo(0) }, // Voltar para a tela inicial
-            onNavigateToPayment = { navigateTo(2) } // Navegar para a tela de pagamento
+            onNavigateToHome = { navigateTo(0) },
+            onNavigateToPayment = { navigateTo(2) }
         )
     },
     { cartState, navigateTo ->
-        PaymentScreen(
+        PaymentScreen( // Tela de pagamento - index 2
             cartState = cartState,
             onConfirmPayment = {
                 cartState.clearCart()
-                navigateTo(0) // Voltar para a tela inicial após pagamento
+                navigateTo(0)
             },
-            onCancel = { navigateTo(1) } // Voltar para o carrinho
+            onCancel = { navigateTo(1) }
+        )
+    },
+    { cartState, navigateTo ->
+        SignInScreenTeste( // Tela de teste - index 3
+            cartState = cartState,
+            onNavigateToHome = { navigateTo(0) },
         )
     }
 )

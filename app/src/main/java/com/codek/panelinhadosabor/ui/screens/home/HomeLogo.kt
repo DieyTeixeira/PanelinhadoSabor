@@ -2,6 +2,7 @@ package com.codek.panelinhadosabor.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +20,8 @@ import com.codek.panelinhadosabor.R
 
 @Composable
 fun HomeLogo(
-    colorSec: Color
+    colorSec: Color,
+    onNavigateToTeste: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -35,6 +37,7 @@ fun HomeLogo(
             modifier = Modifier
                 .size(100.dp)
                 .clip(RoundedCornerShape(100))
+                .clickable( onClick = onNavigateToTeste )
         )
     }
 }
